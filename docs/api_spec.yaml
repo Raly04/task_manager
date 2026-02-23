@@ -1,0 +1,208 @@
+openapi: 3.0.0
+info:
+  title: Task Manager API
+  description: API pour la gestion collaborative de tâches
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000/api
+    description: Serveur de développement local
+
+components:
+  securitySchemes:
+    sanctum:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Authentification via Laravel Sanctum (Token de session)
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string, format: email }
+        role: { type: string, enum: [admin, user] }
+
+    Task:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        description: { type: string, nullable: true }
+        status: { type: string, enum: [todo, in-progress, done] }
+        priority: { type: string, enum: [low, medium, high] }
+        due_date: { type: string, format: date }
+        created_by: { $ref: '#/components/schemas/UserShort' }
+        assigned_to: { $ref: '#/components/schemas/UserShort' }
+        comments_count: { type: integer }
+        created_at: { type: string, format: date-time }
+
+    UserShort:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string }
+
+    Comment:
+      type: object
+      properties:
+        id: { type: integer }
+        body: { type: string }
+        user: { $ref: '#/components/schemas/UserShort' }
+        created_at: { type: string, format: date-time }
+
+paths:
+  /register:
+    post:
+      summary: Inscription d'un nouvel utilisateur
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password, password_confirmation]
+              properties:
+                name: { type: string }
+                email: { type: string }
+                password: { type: string, format: password }
+                password_confirmation: { type: string }
+      responses:
+        201:
+          description: Utilisateur créé
+
+  /login:
+    post:
+      summary: Connexion
+      tags: [Auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: Token généré
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token: { type: string }
+
+  /tasks:
+    get:
+      summary: Liste des tâches
+      tags: [Tasks]
+      security: [{ sanctum: [] }]
+      parameters:
+        - name: status
+          in: query
+          schema: { type: string, enum: [todo, in-progress, done] }
+        - name: priority
+          in: query
+          schema: { type: string, enum: [low, medium, high] }
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+      responses:
+        200:
+          description: Liste paginée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/Task' }
+
+    post:
+      summary: Créer une tâche
+      tags: [Tasks]
+      security: [{ sanctum: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, due_date]
+              properties:
+                title: { type: string }
+                description: { type: string }
+                status: { type: string }
+                priority: { type: string }
+                due_date: { type: string, format: date }
+                assigned_to: { type: integer }
+      responses:
+        201:
+          description: Tâche créée
+
+  /tasks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      summary: Détails d'une tâche
+      tags: [Tasks]
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Détails
+    put:
+      summary: Modifier une tâche
+      tags: [Tasks]
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Mise à jour réussie
+    delete:
+      summary: Supprimer une tâche
+      tags: [Tasks]
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Suppression réussie
+
+  /tasks/{id}/comments:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: integer }
+    get:
+      summary: Liste des commentaires
+      tags: [Comments]
+      security: [{ sanctum: [] }]
+      responses:
+        200:
+          description: Liste
+    post:
+      summary: Ajouter un commentaire
+      tags: [Comments]
+      security: [{ sanctum: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [body]
+              properties:
+                body: { type: string }
+      responses:
+        201:
+          description: Créé

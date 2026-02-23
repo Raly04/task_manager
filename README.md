@@ -1,27 +1,38 @@
-# Task Manager - Application Collaboration
+# Task Manager - Fullstack Collaborative Application
 
-Système de gestion de tâches collaboratif avec Backend Laravel (API) et Frontend React.
+Une application de gestion de tâches collaborative performante, responsive et en temps réel.
 
-## 🚀 Technologies
-
-- **Backend** : Laravel 11, SQLite, Sanctum (Auth)
-- **Frontend** : React 18 (Vite), TypeScript, Tailwind CSS, DaisyUI, Sonner (Toasts)
-- **Qualité** : PHPUnit (Backend), Jest + React Testing Library (Frontend), ESLint
+## 🚀 Fonctionnalités
+- **Authentification complète** (Sanctum).
+- **CRUD Tâches** : Création, Edition, Suppression, Assignation.
+- **Tableau de Bord** : Vue Liste (responsive) et Vue Kanban.
+- **Temps Réel** : Mises à jour instantanées via Laravel Reverb (WebSockets).
+- **Système de Commentaires** : Collaboration directe sur chaque tâche.
+- **Design Premium** : Interface mobile-first avec Tailwind CSS et DaisyUI.
 
 ---
 
 ## 🛠️ Installation
 
-### 1. Backend (Laravel)
+### 1. Backend (Laravel API)
 ```bash
 cd back
 composer install
 cp .env.example .env
+php artisan key:generate
 touch database/database.sqlite
 php artisan migrate --seed
-php artisan serve
 ```
-*L'API sera disponible sur `http://localhost:8000`*
+
+**Démarrer les services backend :**
+```bash
+# Terminal 1 : Serveur API
+compose run dev
+
+# Terminal 2 : Serveur de Socket (Temps Réel)
+php artisan reverb:start
+
+```
 
 ### 2. Frontend (React)
 ```bash
@@ -29,55 +40,52 @@ cd front
 npm install
 npm run dev
 ```
-*Le frontend sera disponible sur `http://localhost:5173`*
+Définir les variables d'environnement dans le fichier .env en respectant le format du fichier .env.example
+
+L'application sera accessible sur `http://localhost:3000`.
 
 ---
 
 ## 🧪 Tests
 
-### Backend
+### Backend (PHPUnit)
 ```bash
 cd back
 php artisan test
 ```
+*Couverture : Modèles, API Endpoints, Broadcasting, Policies.*
 
-### Frontend
+### Frontend (Jest)
 ```bash
 cd front
 npm test
 ```
+*Couverture : Composants UI, Hooks custom, Mocks API.*
 
 ---
 
-## 📖 API Documentation
+## 📚 Documentation API
 
-### Authentification
-- `POST /api/register` : Création de compte
-- `POST /api/login` : Connexion
-- `POST /api/logout` : Déconnexion (nécessite Token)
+Retrouvez la documentation technique complète dans le dossier `docs/` :
+- 📄 **[Spécification OpenAPI (Swagger)](./docs/api_spec.yaml)**
+- 📮 **[Collection Postman](./docs/postman_collection.json)** (Importez le fichier dans Postman et utilisez la variable `base_url`).
 
-### Tâches
-- `GET /api/tasks` : Liste paginée (Filtres: `status`, `priority`, `assigned_to`, `search`)
-- `POST /api/tasks` : Créer une tâche
-- `GET /api/tasks/{id}` : Détails d'une tâche
-- `PUT /api/tasks/{id}` : Modifier (Admin, Créateur ou Assigné)
-- `DELETE /api/tasks/{id}` : Supprimer (Admin, Créateur ou Assigné)
+### Résumé des Endpoints
+
+| Méthode | Endpoint | Description | Auth |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/register` | Inscription d'un nouvel utilisateur | ❌ |
+| `POST` | `/login` | Connexion et obtention du token | ❌ |
+| `GET` | `/tasks` | Liste des tâches (filtres dispos) | ✅ |
+| `POST` | `/tasks` | Créer une nouvelle tâche | ✅ |
+| `GET` | `/tasks/{id}` | Détails d'une tâche et commentaires | ✅ |
+| `PUT` | `/tasks/{id}` | Modifier une tâche | ✅ |
+| `DELETE` | `/tasks/{id}` | Supprimer une tâche | ✅ |
+| `POST` | `/tasks/{id}/comments` | Ajouter un commentaire | ✅ |
+| `DELETE` | `/tasks/{id}/comments/{cid}` | Supprimer un commentaire | ✅ |
 
 ---
 
-## 🔑 Identifiants de test (Seeder)
+## 🔑 Identifiants de Test (Seed)
 - **Admin** : `admin@test.com` / `password`
-- **Utilisateur (Ny Aina)** : `nyaina@test.com` / `password`
-
----
-
-## ✨ Fonctionnalités implémentées
-- [x] Authentification complète avec Sanctum.
-- [x] CRUD complet des tâches avec validation (Zod au front, FormRequest au back).
-- [x] Gestion des rôles (Admin/User).
-- [x] Permissions fines (Assigné peut modifier sa tâche).
-- [x] Recherche avec Debounce et filtrage avancé.
-- [x] UI Premium (DaisyUI, Mode sombre supporté, Animations de chargement).
-- [x] Lazy loading des routes.
-- [x] Modal de confirmation pour les actions destructives.
-- [x] Tests unitaires et fonctionnels (Back & Front).
+- **User** : `rabe@test.com` / `password`
