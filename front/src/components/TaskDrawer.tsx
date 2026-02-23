@@ -123,10 +123,11 @@ export function TaskDrawer({
           <form className="flex-1 overflow-y-auto p-5" onSubmit={submitForm}>
             <div className="space-y-5">
               <div className="form-control w-full">
-                <label className="label py-1">
+                <label className="label py-1" htmlFor="task-title">
                   <span className="label-text font-bold">Titre</span>
                 </label>
                 <input
+                  id="task-title"
                   className={`input input-bordered w-full ${errors.title ? 'input-error' : ''}`}
                   {...register('title')}
                 />
@@ -138,10 +139,11 @@ export function TaskDrawer({
               </div>
 
               <div className="form-control w-full">
-                <label className="label py-1">
+                <label className="label py-1" htmlFor="task-description">
                   <span className="label-text font-bold">Description</span>
                 </label>
                 <textarea
+                  id="task-description"
                   className="textarea textarea-bordered h-32 w-full resize-none"
                   {...register('description')}
                 />
@@ -154,10 +156,10 @@ export function TaskDrawer({
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="form-control w-full">
-                  <label className="label py-1">
+                  <label className="label py-1" htmlFor="task-status">
                     <span className="label-text font-bold">Statut</span>
                   </label>
-                  <select className="select select-bordered w-full" {...register('status')}>
+                  <select id="task-status" className="select select-bordered w-full" {...register('status')}>
                     {TASK_STATUS.map((status) => (
                       <option key={status.value} value={status.value}>
                         {status.label}
@@ -167,10 +169,10 @@ export function TaskDrawer({
                 </div>
 
                 <div className="form-control w-full">
-                  <label className="label py-1">
+                  <label className="label py-1" htmlFor="task-priority">
                     <span className="label-text font-bold">Priorité</span>
                   </label>
-                  <select className="select select-bordered w-full" {...register('priority')}>
+                  <select id="task-priority" className="select select-bordered w-full" {...register('priority')}>
                     {TASK_PRIORITY.map((priority) => (
                       <option key={priority.value} value={priority.value}>
                         {priority.label}
@@ -182,10 +184,11 @@ export function TaskDrawer({
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="form-control w-full">
-                  <label className="label py-1">
+                  <label className="label py-1" htmlFor="task-due-date">
                     <span className="label-text font-bold">Date limite</span>
                   </label>
                   <input
+                    id="task-due-date"
                     className={`input input-bordered w-full ${errors.due_date ? 'input-error' : ''}`}
                     type="date"
                     {...register('due_date')}
@@ -198,10 +201,10 @@ export function TaskDrawer({
                 </div>
 
                 <div className="form-control w-full">
-                  <label className="label py-1">
+                  <label className="label py-1" htmlFor="task-assigned-to">
                     <span className="label-text font-bold">Assignée à</span>
                   </label>
-                  <select className="select select-bordered w-full" {...register('assigned_to')}>
+                  <select id="task-assigned-to" className="select select-bordered w-full" {...register('assigned_to')}>
                     <option value="">Non assignée</option>
                     {users.map((user) => (
                       <option key={user.id} value={String(user.id)}>
