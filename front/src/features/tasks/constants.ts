@@ -15,13 +15,13 @@ export const TASK_PRIORITY: Array<{ value: '' | TaskPriority; label: string }> =
 ]
 
 export const STATUS_BADGE: Record<TaskStatus, string> = {
-    todo: 'badge badge-warning',
-    'in-progress': 'badge badge-info',
+    todo: 'badge badge-info',
+    'in-progress': 'badge badge-secondary',
     done: 'badge badge-success',
 }
 
 export const PRIORITY_BADGE: Record<TaskPriority, string> = {
     low: 'badge badge-ghost',
-    medium: 'badge badge-accent',
+    medium: 'badge badge-warning text-warning-content',
     high: 'badge badge-error',
 }

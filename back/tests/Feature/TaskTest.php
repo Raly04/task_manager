@@ -236,7 +236,10 @@ class TaskTest extends TestCase
     public function test_user_cannot_update_others_task(): void
     {
         $otherUser = User::factory()->create(['role' => 'user']);
-        $task = Task::factory()->create(['created_by' => $otherUser->id]);
+        $task = Task::factory()->create([
+            'created_by' => $otherUser->id,
+            'assigned_to' => $otherUser->id,
+        ]);
 
         $response = $this->actingAs($this->user)
                          ->putJson("/api/tasks/{$task->id}", [
@@ -244,6 +247,23 @@ class TaskTest extends TestCase
                          ]);
 
         $response->assertStatus(403);
+    }
+
+    public function test_assigned_user_can_update_task(): void
+    {
+        $creator = User::factory()->create(['role' => 'user']);
+        $task = Task::factory()->create([
+            'created_by' => $creator->id,
+            'assigned_to' => $this->user->id,
+        ]);
+
+        $response = $this->actingAs($this->user)
+                         ->putJson("/api/tasks/{$task->id}", [
+                             'title' => 'Assigned user update',
+                         ]);
+
+        $response->assertOk()
+                 ->assertJsonFragment(['title' => 'Assigned user update']);
     }
 
     //DELETE
@@ -273,7 +293,10 @@ class TaskTest extends TestCase
     public function test_user_cannot_delete_others_task(): void
     {
         $otherUser = User::factory()->create(['role' => 'user']);
-        $task = Task::factory()->create(['created_by' => $otherUser->id]);
+        $task = Task::factory()->create([
+            'created_by' => $otherUser->id,
+            'assigned_to' => $otherUser->id,
+        ]);
 
         $response = $this->actingAs($this->user)
                          ->deleteJson("/api/tasks/{$task->id}");

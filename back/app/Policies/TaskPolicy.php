@@ -13,7 +13,7 @@ class TaskPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true; // Tout le monde peut lister
     }
 
     /**
@@ -21,7 +21,7 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        return false;
+        return true; // Tout le monde peut voir une tâche
     }
 
     /**
@@ -29,7 +29,7 @@ class TaskPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return true; // Tout utilisateur connecté peut créer
     }
 
     /**
@@ -37,7 +37,7 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $user->role === 'admin' || $task->created_by === $user->id;
+        return $user->role === 'admin' || $task->created_by === $user->id || $task->assigned_to === $user->id;
     }
 
     /**
@@ -45,7 +45,7 @@ class TaskPolicy
      */
     public function delete(User $user, Task $task): bool
     {
-        return $user->role === 'admin' || $task->created_by === $user->id;
+        return $user->role === 'admin' || $task->created_by === $user->id || $task->assigned_to === $user->id;
     }
 
     /**
