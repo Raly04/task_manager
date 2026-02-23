@@ -127,7 +127,7 @@ export function DashboardPage() {
 
     return (
         <MainLayout>
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-center sm:justify-between">
                 <button className="btn btn-primary sm:w-fit" onClick={openCreateDrawer} type="button">
                     Nouvelle tâche
                 </button>

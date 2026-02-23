@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, getApiErrorMessage } from '../lib/api'
+import { echo } from '../lib/echo'
 import type { Comment, CommentPayload } from '../types'
 
 export function useComments(taskId: number | null) {
@@ -29,13 +30,25 @@ export function useComments(taskId: number | null) {
         fetchComments()
     }, [fetchComments])
 
+    useEffect(() => {
+        if (!taskId) return
+
+        const channel = echo.channel(`tasks.${taskId}`)
+            .listen('.comment.created', () => fetchComments())
+            .listen('.comment.deleted', () => fetchComments())
+
+        return () => {
+            channel.stopListening('.comment.created')
+            channel.stopListening('.comment.deleted')
+        }
+    }, [taskId, fetchComments])
+
     const addComment = async (payload: CommentPayload) => {
         if (!taskId) return
 
         setIsSaving(true)
         try {
             const response = await api.post<{ data: Comment }>(`/tasks/${taskId}/comments`, payload)
-            // Optimistic update or just refetch
             setComments((prev) => [response.data.data, ...prev])
         } catch (error) {
             throw new Error(getApiErrorMessage(error))

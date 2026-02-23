@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api, getApiErrorMessage } from '../lib/api'
+import { echo } from '../lib/echo'
 import type { PaginationMeta, Task, TaskFilters, TaskPayload } from '../types'
 
 interface LaravelTaskResponse {
@@ -54,17 +55,30 @@ export function useTasks({ filters, page, isEnabled, all }: UseTasksOptions) {
     } catch (error) {
       const message = getApiErrorMessage(error)
       setFetchError(message)
-      throw new Error(message)
     } finally {
       setIsFetching(false)
     }
   }, [filters.assigned_to, filters.priority, filters.search, filters.status, isEnabled, page, all])
 
   useEffect(() => {
-    fetchTasks().catch(() => {
-      // Error state is already stored in fetchError.
-    })
+    fetchTasks()
   }, [fetchTasks])
+
+  // Realtime
+  useEffect(() => {
+    if (!isEnabled) return
+
+    const channel = echo.channel('tasks')
+      .listen('.task.created', () => fetchTasks())
+      .listen('.task.updated', () => fetchTasks())
+      .listen('.task.deleted', () => fetchTasks())
+
+    return () => {
+      channel.stopListening('.task.created')
+      channel.stopListening('.task.updated')
+      channel.stopListening('.task.deleted')
+    }
+  }, [isEnabled, fetchTasks])
 
   const createTask = useCallback(async (payload: TaskPayload) => {
     setIsSaving(true)

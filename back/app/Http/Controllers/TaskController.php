@@ -6,6 +6,9 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
+use App\Events\TaskUpdated;
+use App\Events\TaskCreated;
+use App\Events\TaskDeleted;
 use Illuminate\Http\Request;
 
 class TaskController extends Controller
@@ -50,6 +53,8 @@ class TaskController extends Controller
             'created_by' => $request->user()->id,
         ]);
 
+        TaskCreated::dispatch($task);
+
         return new TaskResource($task->load(['creator', 'assigned']));
     }
 
@@ -68,8 +73,9 @@ class TaskController extends Controller
     {
         $this->authorize('update', $task);
         $task->update($request->validated());
+        TaskUpdated::dispatch($task);
 
-        return new TaskResource($task->load(['creator', 'assigned']));
+        return new TaskResource($task->load(['creator', 'assigned'])->loadCount('comments'));
     }
 
     /**
@@ -78,7 +84,10 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $this->authorize('delete', $task);
+        $taskId = $task->id;
         $task->delete();
+
+        TaskDeleted::dispatch($taskId);
 
         return response()->json(['message' => 'Task deleted successfully.']);
     }

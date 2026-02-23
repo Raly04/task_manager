@@ -45,9 +45,9 @@ describe('TaskTable', () => {
             />
         )
 
-        expect(screen.getByText('Test Task 1')).toBeInTheDocument()
-        expect(screen.getByText('Description 1')).toBeInTheDocument()
-        expect(screen.getByText('User 1')).toBeInTheDocument()
+        expect(screen.getAllByText('Test Task 1')[0]).toBeInTheDocument()
+        expect(screen.getAllByText('Description 1')[0]).toBeInTheDocument()
+        expect(screen.getAllByText('User 1')[0]).toBeInTheDocument()
     })
 
     it('shows empty state when no tasks', () => {
@@ -64,7 +64,7 @@ describe('TaskTable', () => {
             />
         )
 
-        expect(screen.getByText('Aucune tâche trouvée.')).toBeInTheDocument()
+        expect(screen.getAllByText('Aucune tâche trouvée.')[0]).toBeInTheDocument()
     })
 
     it('calls onEdit when clicking modifier', () => {
@@ -81,7 +81,7 @@ describe('TaskTable', () => {
             />
         )
 
-        fireEvent.click(screen.getByText('Modifier'))
+        fireEvent.click(screen.getAllByText('Modifier')[0])
         expect(mockOnEdit).toHaveBeenCalledWith(mockTasks[0])
     })
 
@@ -99,7 +99,7 @@ describe('TaskTable', () => {
             />
         )
 
-        fireEvent.click(screen.getByText('Supprimer'))
+        fireEvent.click(screen.getAllByText('Supprimer')[0])
         expect(mockOnDelete).toHaveBeenCalledWith(mockTasks[0].id)
     })
 
@@ -117,7 +117,7 @@ describe('TaskTable', () => {
             />
         )
 
-        const commentBtn = screen.getByTitle('Commentaires')
+        const commentBtn = screen.getAllByTitle('Commentaires')[0]
         fireEvent.click(commentBtn)
         expect(mockOnComment).toHaveBeenCalledWith(mockTasks[0])
     })
