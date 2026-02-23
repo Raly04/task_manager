@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { Toaster } from 'react-hot-toast'
+import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { useAuth } from './hooks/useAuth'
 import { AuthPage } from './pages/AuthPage'
@@ -33,7 +33,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <AppRoutes />
-        <Toaster position="top-right" />
+        <Toaster position="top-right" richColors closeButton />
       </BrowserRouter>
     </AuthProvider>
   )

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { MainLayout } from '../layouts/MainLayout'
 import { TaskTable } from '../features/tasks/components/TaskTable'
 import { TaskFilters } from '../features/tasks/components/TaskFilters'
 import { TaskDrawer } from '../components/TaskDrawer'
+import { ConfirmationModal } from '../components/ConfirmationModal'
 import { useTasks } from '../hooks/useTasks'
 import { useAuth } from '../hooks/useAuth'
 import { useDebounce } from '../hooks/useDebounce'
@@ -20,6 +21,7 @@ export function DashboardPage() {
     const [page, setPage] = useState(1)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [editingTask, setEditingTask] = useState<Task | null>(null)
+    const [taskToDelete, setTaskToDelete] = useState<number | null>(null)
     const debouncedSearch = useDebounce(filters.search, 450)
 
     const effectiveFilters = useMemo<ITaskFilters>(() => {
@@ -93,13 +95,13 @@ export function DashboardPage() {
         }
     }
 
-    const onDeleteTask = async (taskId: number) => {
-        const shouldDelete = window.confirm('Supprimer cette tâche ?')
-        if (!shouldDelete) return
+    const confirmDelete = async () => {
+        if (!taskToDelete) return
 
         try {
-            await deleteTask(taskId)
-            toast.success('Tâche supprimée.')
+            await deleteTask(taskToDelete)
+            toast.success('Tâche supprimée avec succès.')
+            setTaskToDelete(null)
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Suppression impossible.'
             toast.error(message)
@@ -131,7 +133,7 @@ export function DashboardPage() {
                 isFetching={isFetching}
                 deletingTaskId={deletingTaskId}
                 onEdit={openEditDrawer}
-                onDelete={onDeleteTask}
+                onDelete={setTaskToDelete}
                 onPageChange={setPage}
             />
 
@@ -142,6 +144,18 @@ export function DashboardPage() {
                 onSubmit={onSaveTask}
                 task={editingTask}
                 users={assignableUsers}
+            />
+
+            <ConfirmationModal
+                isOpen={taskToDelete !== null}
+                title="Supprimer la tâche"
+                message="Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible."
+                confirmText="Supprimer"
+                cancelText="Annuler"
+                isLoading={deletingTaskId !== null}
+                onConfirm={confirmDelete}
+                onCancel={() => setTaskToDelete(null)}
+                type="danger"
             />
         </MainLayout>
     )

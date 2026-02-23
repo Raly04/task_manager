@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { AsyncButton } from '../components/AsyncButton'
 import { useAuth } from '../hooks/useAuth'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 interface MainLayoutProps {
     children: ReactNode
