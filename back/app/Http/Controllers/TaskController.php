@@ -15,12 +15,26 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $tasks = Task::with(['creator', 'assigned'])
+        $query = Task::with(['creator', 'assigned'])
             ->status($request->status)
             ->priority($request->priority)
             ->assignedTo($request->assigned_to)
-            ->search($request->search)
-            ->paginate(10);
+            ->search($request->search);
+
+        if ($request->boolean('all')) {
+            $tasks = $query->get();
+            // On retourne une structure paginée factice pour la compatibilité front
+            return TaskResource::collection($tasks)->additional([
+                'meta' => [
+                    'current_page' => 1,
+                    'last_page' => 1,
+                    'per_page' => $tasks->count(),
+                    'total' => $tasks->count(),
+                ]
+            ]);
+        }
+
+        $tasks = $query->latest()->paginate($request->integer('per_page', 10));
 
         return TaskResource::collection($tasks);
     }

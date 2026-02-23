@@ -1,17 +1,22 @@
 import { useEffect, useMemo, useState } from 'react'
 import { toast } from 'sonner'
+import { LayoutGrid, List } from 'lucide-react'
 import { MainLayout } from '../layouts/MainLayout'
 import { TaskTable } from '../features/tasks/components/TaskTable'
+import { TaskKanban } from '../features/tasks/components/TaskKanban'
 import { TaskFilters } from '../features/tasks/components/TaskFilters'
 import { TaskDrawer } from '../components/TaskDrawer'
 import { ConfirmationModal } from '../components/ConfirmationModal'
 import { useTasks } from '../hooks/useTasks'
 import { useAuth } from '../hooks/useAuth'
+import { useUsers } from '../hooks/useUsers'
 import { useDebounce } from '../hooks/useDebounce'
-import type { Task, TaskFilters as ITaskFilters, TaskPayload, User } from '../types'
+import type { Task, TaskFilters as ITaskFilters, TaskPayload, TaskStatus } from '../types'
 
 export function DashboardPage() {
-    const { user, isAuthenticated } = useAuth()
+    const { isAuthenticated } = useAuth()
+    const { users: allUsers } = useUsers(isAuthenticated)
+    const [view, setView] = useState<'table' | 'kanban'>('table')
     const [filters, setFilters] = useState<ITaskFilters>({
         status: '',
         priority: '',
@@ -43,8 +48,9 @@ export function DashboardPage() {
         deleteTask,
     } = useTasks({
         filters: effectiveFilters,
-        page,
+        page: view === 'table' ? page : 1, // Disable pagination for kanban if needed, or handle it
         isEnabled: isAuthenticated,
+        all: view === 'kanban',
     })
 
     useEffect(() => {
@@ -52,16 +58,6 @@ export function DashboardPage() {
             toast.error(fetchError, { id: 'tasks-fetch-error' })
         }
     }, [fetchError])
-
-    const assignableUsers = useMemo(() => {
-        const usersById = new Map<number, User>()
-        if (user) usersById.set(user.id, user)
-        for (const task of tasks) {
-            if (task.created_by) usersById.set(task.created_by.id, task.created_by)
-            if (task.assigned_to) usersById.set(task.assigned_to.id, task.assigned_to)
-        }
-        return [...usersById.values()].sort((a, b) => a.name.localeCompare(b.name))
-    }, [tasks, user])
 
     const openCreateDrawer = () => {
         setEditingTask(null)
@@ -95,6 +91,16 @@ export function DashboardPage() {
         }
     }
 
+    const onUpdateTaskStatus = async (taskId: number, payload: { status?: TaskStatus }) => {
+        try {
+            await updateTask(taskId, payload)
+            toast.success('Statut mis à jour.')
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Droit insuffisant ou erreur.'
+            toast.error(message)
+        }
+    }
+
     const confirmDelete = async () => {
         if (!taskToDelete) return
 
@@ -115,27 +121,52 @@ export function DashboardPage() {
 
     return (
         <MainLayout>
-            <div className="flex justify-start">
-                <button className="btn btn-primary" onClick={openCreateDrawer} type="button">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <button className="btn btn-primary sm:w-fit" onClick={openCreateDrawer} type="button">
                     Nouvelle tâche
                 </button>
+
+                <div className="join bg-base-100 shadow-sm border border-base-300">
+                    <button
+                        className={`join-item btn btn-sm h-10 px-4 ${view === 'table' ? 'btn-active btn-ghost' : 'btn-ghost'}`}
+                        onClick={() => setView('table')}
+                    >
+                        <List size={18} className="mr-2" />
+                        Liste
+                    </button>
+                    <button
+                        className={`join-item btn btn-sm h-10 px-4 ${view === 'kanban' ? 'btn-active btn-ghost' : 'btn-ghost'}`}
+                        onClick={() => setView('kanban')}
+                    >
+                        <LayoutGrid size={18} className="mr-2" />
+                        Kanban
+                    </button>
+                </div>
             </div>
 
             <TaskFilters
                 filters={filters}
-                users={assignableUsers}
+                users={allUsers}
                 onFilterChange={handleFilterChange}
             />
 
-            <TaskTable
-                tasks={tasks}
-                meta={meta}
-                isFetching={isFetching}
-                deletingTaskId={deletingTaskId}
-                onEdit={openEditDrawer}
-                onDelete={setTaskToDelete}
-                onPageChange={setPage}
-            />
+            {view === 'table' ? (
+                <TaskTable
+                    tasks={tasks}
+                    meta={meta}
+                    isFetching={isFetching}
+                    deletingTaskId={deletingTaskId}
+                    onEdit={openEditDrawer}
+                    onDelete={setTaskToDelete}
+                    onPageChange={setPage}
+                />
+            ) : (
+                <TaskKanban
+                    tasks={tasks}
+                    onEdit={openEditDrawer}
+                    onTaskUpdate={onUpdateTaskStatus}
+                />
+            )}
 
             <TaskDrawer
                 isOpen={isDrawerOpen}
@@ -143,7 +174,7 @@ export function DashboardPage() {
                 onClose={closeDrawer}
                 onSubmit={onSaveTask}
                 task={editingTask}
-                users={assignableUsers}
+                users={allUsers}
             />
 
             <ConfirmationModal

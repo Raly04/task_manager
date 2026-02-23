@@ -18,9 +18,10 @@ interface UseTasksOptions {
   filters: TaskFilters
   page: number
   isEnabled: boolean
+  all?: boolean
 }
 
-export function useTasks({ filters, page, isEnabled }: UseTasksOptions) {
+export function useTasks({ filters, page, isEnabled, all }: UseTasksOptions) {
   const [tasks, setTasks] = useState<Task[]>([])
   const [meta, setMeta] = useState<PaginationMeta>(INITIAL_META)
   const [isFetching, setIsFetching] = useState(false)
@@ -43,6 +44,7 @@ export function useTasks({ filters, page, isEnabled }: UseTasksOptions) {
         priority: filters.priority || undefined,
         assigned_to: filters.assigned_to || undefined,
         search: filters.search.trim() || undefined,
+        all: all || undefined,
       }
 
       const response = await api.get<LaravelTaskResponse>('/tasks', { params })
@@ -56,7 +58,7 @@ export function useTasks({ filters, page, isEnabled }: UseTasksOptions) {
     } finally {
       setIsFetching(false)
     }
-  }, [filters.assigned_to, filters.priority, filters.search, filters.status, isEnabled, page])
+  }, [filters.assigned_to, filters.priority, filters.search, filters.status, isEnabled, page, all])
 
   useEffect(() => {
     fetchTasks().catch(() => {
@@ -76,7 +78,7 @@ export function useTasks({ filters, page, isEnabled }: UseTasksOptions) {
     }
   }, [fetchTasks])
 
-  const updateTask = useCallback(async (taskId: number, payload: TaskPayload) => {
+  const updateTask = useCallback(async (taskId: number, payload: Partial<TaskPayload>) => {
     setIsSaving(true)
     try {
       await api.put(`/tasks/${taskId}`, payload)
