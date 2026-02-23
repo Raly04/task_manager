@@ -16,10 +16,10 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $tasks = Task::with(['creator', 'assigned'])
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->when($request->priority, fn($q) => $q->where('priority', $request->priority))
-            ->when($request->assigned_to, fn($q) => $q->where('assigned_to', $request->assigned_to))
-            ->when($request->search, fn($q) => $q->where('title', 'like', '%' . $request->search . '%'))
+            ->status($request->status)
+            ->priority($request->priority)
+            ->assignedTo($request->assigned_to)
+            ->search($request->search)
             ->paginate(10);
 
         return TaskResource::collection($tasks);

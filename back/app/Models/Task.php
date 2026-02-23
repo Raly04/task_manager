@@ -28,4 +28,24 @@ class Task extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function scopeStatus($query, ?string $status)
+    {
+        return $query->when($status, fn($q) => $q->where('status', $status));
+    }
+
+    public function scopePriority($query, ?string $priority)
+    {
+        return $query->when($priority, fn($q) => $q->where('priority', $priority));
+    }
+
+    public function scopeSearch($query, ?string $term)
+    {
+        return $query->when($term, fn($q) => $q->where('title', 'like', "%{$term}%"));
+    }
+
+    public function scopeAssignedTo($query, ?int $userId)
+    {
+        return $query->when($userId, fn($q) => $q->where('assigned_to', $userId));
+    }
 }

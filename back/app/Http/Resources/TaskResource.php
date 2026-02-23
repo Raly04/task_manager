@@ -22,7 +22,7 @@ class TaskResource extends JsonResource
         'priority'    => $this->priority,
         'due_date'    => $this->due_date,
         'created_by'  => $this->creator?->only('id', 'name', 'email'),
-        'assigned_to' => $this->assignee?->only('id', 'name', 'email'),
+        'assigned_to' => $this->assigned?->only('id', 'name', 'email'),
         'created_at'  => $this->created_at->toDateTimeString(),
     ];
 }
