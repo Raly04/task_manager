@@ -13,6 +13,7 @@ const mockTasks: Task[] = [
         due_date: '2026-12-31',
         assigned_to: { id: 1, name: 'User 1', email: 'user1@test.com', role: 'user' },
         created_by: { id: 2, name: 'Admin', email: 'admin@test.com', role: 'admin' },
+        comments_count: 0,
         created_at: ''
     }
 ]
@@ -27,6 +28,7 @@ const mockMeta: PaginationMeta = {
 describe('TaskTable', () => {
     const mockOnEdit = jest.fn()
     const mockOnDelete = jest.fn()
+    const mockOnComment = jest.fn()
     const mockOnPageChange = jest.fn()
 
     it('renders tasks correctly', () => {
@@ -38,6 +40,7 @@ describe('TaskTable', () => {
                 deletingTaskId={null}
                 onEdit={mockOnEdit}
                 onDelete={mockOnDelete}
+                onComment={mockOnComment}
                 onPageChange={mockOnPageChange}
             />
         )
@@ -56,6 +59,7 @@ describe('TaskTable', () => {
                 deletingTaskId={null}
                 onEdit={mockOnEdit}
                 onDelete={mockOnDelete}
+                onComment={mockOnComment}
                 onPageChange={mockOnPageChange}
             />
         )
@@ -72,6 +76,7 @@ describe('TaskTable', () => {
                 deletingTaskId={null}
                 onEdit={mockOnEdit}
                 onDelete={mockOnDelete}
+                onComment={mockOnComment}
                 onPageChange={mockOnPageChange}
             />
         )
@@ -89,11 +94,31 @@ describe('TaskTable', () => {
                 deletingTaskId={null}
                 onEdit={mockOnEdit}
                 onDelete={mockOnDelete}
+                onComment={mockOnComment}
                 onPageChange={mockOnPageChange}
             />
         )
 
         fireEvent.click(screen.getByText('Supprimer'))
         expect(mockOnDelete).toHaveBeenCalledWith(mockTasks[0].id)
+    })
+
+    it('calls onComment when clicking comment button', () => {
+        render(
+            <TaskTable
+                tasks={mockTasks}
+                meta={mockMeta}
+                isFetching={false}
+                deletingTaskId={null}
+                onEdit={mockOnEdit}
+                onDelete={mockOnDelete}
+                onComment={mockOnComment}
+                onPageChange={mockOnPageChange}
+            />
+        )
+
+        const commentBtn = screen.getByTitle('Commentaires')
+        fireEvent.click(commentBtn)
+        expect(mockOnComment).toHaveBeenCalledWith(mockTasks[0])
     })
 })

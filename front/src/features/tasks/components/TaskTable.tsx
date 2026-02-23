@@ -1,3 +1,4 @@
+import { MessageSquare } from 'lucide-react'
 import type { Task, PaginationMeta } from '../../../types'
 import { formatDate } from '../../../utils/date'
 import { STATUS_BADGE, PRIORITY_BADGE } from '../constants'
@@ -10,6 +11,7 @@ interface TaskTableProps {
     deletingTaskId: number | null
     onEdit: (task: Task) => void
     onDelete: (taskId: number) => void
+    onComment: (task: Task) => void
     onPageChange: (page: number) => void
 }
 
@@ -20,6 +22,7 @@ export function TaskTable({
     deletingTaskId,
     onEdit,
     onDelete,
+    onComment,
     onPageChange,
 }: TaskTableProps) {
     return (
@@ -71,6 +74,18 @@ export function TaskTable({
                                         <td>{formatDate(task.due_date)}</td>
                                         <td>
                                             <div className="flex gap-2">
+                                                <button
+                                                    className="btn btn-sm btn-ghost btn-circle text-primary relative"
+                                                    onClick={() => onComment(task)}
+                                                    title="Commentaires"
+                                                >
+                                                    <MessageSquare size={18} />
+                                                    {task.comments_count > 0 && (
+                                                        <span className="badge badge-xs badge-primary indicator-item absolute top-0 right-0">
+                                                            {task.comments_count}
+                                                        </span>
+                                                    )}
+                                                </button>
                                                 <button
                                                     className="btn btn-sm btn-outline"
                                                     onClick={() => onEdit(task)}

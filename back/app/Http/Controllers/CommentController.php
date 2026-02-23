@@ -55,13 +55,9 @@ class CommentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Comment $comment)
+    public function destroy(Request $request, Task $task, Comment $comment)
     {
-        // Only admins or comment owners can delete comments
-        if ($request->user()->role !== 'admin' && $comment->user_id !== $request->user()->id) {
-            return response()->json(['message' => 'Non autorisé.'], 403);
-        }
-
+        $this->authorize('delete', $comment);
         $comment->delete();
 
         return response()->json(['message' => 'Commentaire supprimé.']);

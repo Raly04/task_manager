@@ -17,6 +17,7 @@ export interface Task {
   due_date: string | null
   created_by: User | null
   assigned_to: User | null
+  comments_count: number
   created_at: string
 }
 
@@ -56,4 +57,14 @@ export interface AuthPayload {
 export interface RegisterPayload extends AuthPayload {
   name: string
   password_confirmation: string
+}
+export interface Comment {
+  id: number
+  body: string
+  user: User | null
+  created_at: string
+}
+
+export interface CommentPayload {
+  body: string
 }

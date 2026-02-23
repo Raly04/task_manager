@@ -16,6 +16,7 @@ class TaskController extends Controller
     public function index(Request $request)
     {
         $query = Task::with(['creator', 'assigned'])
+            ->withCount('comments')
             ->status($request->status)
             ->priority($request->priority)
             ->assignedTo($request->assigned_to)
@@ -57,7 +58,7 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        return new TaskResource($task->load(['creator', 'assigned', 'comments']));
+        return new TaskResource($task->load(['creator', 'assigned', 'comments'])->loadCount('comments'));
     }
 
     /**

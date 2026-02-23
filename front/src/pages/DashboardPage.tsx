@@ -6,6 +6,7 @@ import { TaskTable } from '../features/tasks/components/TaskTable'
 import { TaskKanban } from '../features/tasks/components/TaskKanban'
 import { TaskFilters } from '../features/tasks/components/TaskFilters'
 import { TaskDrawer } from '../components/TaskDrawer'
+import { CommentModal } from '../components/CommentModal'
 import { ConfirmationModal } from '../components/ConfirmationModal'
 import { useTasks } from '../hooks/useTasks'
 import { useAuth } from '../hooks/useAuth'
@@ -25,6 +26,7 @@ export function DashboardPage() {
     })
     const [page, setPage] = useState(1)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+    const [taskForComments, setTaskForComments] = useState<Task | null>(null)
     const [editingTask, setEditingTask] = useState<Task | null>(null)
     const [taskToDelete, setTaskToDelete] = useState<number | null>(null)
     const debouncedSearch = useDebounce(filters.search, 450)
@@ -67,6 +69,10 @@ export function DashboardPage() {
     const openEditDrawer = (task: Task) => {
         setEditingTask(task)
         setIsDrawerOpen(true)
+    }
+
+    const openComments = (task: Task) => {
+        setTaskForComments(task)
     }
 
     const closeDrawer = () => {
@@ -158,12 +164,14 @@ export function DashboardPage() {
                     deletingTaskId={deletingTaskId}
                     onEdit={openEditDrawer}
                     onDelete={setTaskToDelete}
+                    onComment={openComments}
                     onPageChange={setPage}
                 />
             ) : (
                 <TaskKanban
                     tasks={tasks}
                     onEdit={openEditDrawer}
+                    onComment={openComments}
                     onTaskUpdate={onUpdateTaskStatus}
                 />
             )}
@@ -175,6 +183,12 @@ export function DashboardPage() {
                 onSubmit={onSaveTask}
                 task={editingTask}
                 users={allUsers}
+            />
+
+            <CommentModal
+                task={taskForComments}
+                isOpen={taskForComments !== null}
+                onClose={() => setTaskForComments(null)}
             />
 
             <ConfirmationModal

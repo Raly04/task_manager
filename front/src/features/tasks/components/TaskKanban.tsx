@@ -1,16 +1,17 @@
 import { DragDropContext, Droppable, Draggable, type DropResult } from '@hello-pangea/dnd'
 import type { Task, TaskStatus } from '../../../types'
 import { PRIORITY_BADGE, TASK_STATUS } from '../constants'
-import { MoreVertical, Calendar } from 'lucide-react'
+import { MoreVertical, Calendar, MessageSquare } from 'lucide-react'
 import { formatDate } from '../../../utils/date'
 
 interface TaskKanbanProps {
     tasks: Task[]
     onTaskUpdate: (taskId: number, payload: { status?: TaskStatus }) => Promise<void>
     onEdit: (task: Task) => void
+    onComment: (task: Task) => void
 }
 
-export function TaskKanban({ tasks, onTaskUpdate, onEdit }: TaskKanbanProps) {
+export function TaskKanban({ tasks, onTaskUpdate, onEdit, onComment }: TaskKanbanProps) {
     const columns: { id: TaskStatus; title: string }[] = TASK_STATUS
         .filter(s => s.value !== '')
         .map(s => ({ id: s.value as TaskStatus, title: s.label }))
@@ -65,12 +66,26 @@ export function TaskKanban({ tasks, onTaskUpdate, onEdit }: TaskKanbanProps) {
                                                                 <span className={`${PRIORITY_BADGE[task.priority]} badge-xs font-bold uppercase tracking-wider`}>
                                                                     {task.priority}
                                                                 </span>
-                                                                <button
-                                                                    className="btn btn-ghost btn-xs btn-circle"
-                                                                    onClick={() => onEdit(task)}
-                                                                >
-                                                                    <MoreVertical size={14} />
-                                                                </button>
+                                                                <div className="flex gap-1">
+                                                                    <button
+                                                                        className="btn btn-ghost btn-xs btn-circle text-primary relative"
+                                                                        onClick={() => onComment(task)}
+                                                                        title="Commentaires"
+                                                                    >
+                                                                        <MessageSquare size={14} />
+                                                                        {task.comments_count > 0 && (
+                                                                            <span className="badge badge-xs badge-primary absolute -top-1 -right-1 scale-75">
+                                                                                {task.comments_count}
+                                                                            </span>
+                                                                        )}
+                                                                    </button>
+                                                                    <button
+                                                                        className="btn btn-ghost btn-xs btn-circle"
+                                                                        onClick={() => onEdit(task)}
+                                                                    >
+                                                                        <MoreVertical size={14} />
+                                                                    </button>
+                                                                </div>
                                                             </div>
 
                                                             <h4 className="font-bold text-sm leading-tight text-base-content">
