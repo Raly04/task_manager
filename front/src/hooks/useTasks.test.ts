@@ -59,14 +59,22 @@ describe('useTasks hook (realtime)', () => {
     it('listens for realtime events', async () => {
         renderHook(() => useTasks({ filters: mockFilters, page: 1, isEnabled: true }))
 
+        await waitFor(() => {
+            expect(api.get).toHaveBeenCalled()
+        })
+
         const mockChannel = echo.channel('tasks')
         expect(mockChannel.listen).toHaveBeenCalledWith('.task.created', expect.any(Function))
         expect(mockChannel.listen).toHaveBeenCalledWith('.task.updated', expect.any(Function))
         expect(mockChannel.listen).toHaveBeenCalledWith('.task.deleted', expect.any(Function))
     })
 
-    it('stops listening on unmount', () => {
+    it('stops listening on unmount', async () => {
         const { unmount } = renderHook(() => useTasks({ filters: mockFilters, page: 1, isEnabled: true }))
+
+        await waitFor(() => {
+            expect(api.get).toHaveBeenCalled()
+        })
 
         unmount()
 
