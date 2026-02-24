@@ -131,8 +131,8 @@ export function TaskTable({
                             <div className="flex justify-between items-start">
                                 <h3 className="font-bold text-base leading-tight pr-2">{task.title}</h3>
                                 <div className="flex gap-1 shrink-0">
-                                    <span className={`${PRIORITY_BADGE[task.priority]} badge-xs`}>{task.priority}</span>
-                                    <span className={`${STATUS_BADGE[task.status]} badge-xs`}>{task.status}</span>
+                                    <span className={`${PRIORITY_BADGE[task.priority]}`}>{task.priority}</span>
+                                    <span className={`${STATUS_BADGE[task.status]}`}>{task.status}</span>
                                 </div>
                             </div>
                             <p className="text-sm text-base-content/60 line-clamp-2">

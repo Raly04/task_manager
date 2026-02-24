@@ -88,7 +88,7 @@ export function CommentModal({ task, isOpen, onClose }: CommentModalProps) {
                             return (
                                 <div key={comment.id} className={`flex gap-3 group animate-in fade-in slide-in-from-bottom-2`}>
                                     <div className="avatar placeholder h-fit">
-                                        <div className="bg-primary/10 text-primary rounded-full w-8">
+                                        <div className="bg-primary/10 text-primary rounded-full w-8 flex items-center justify-center">
                                             <span className="text-xs font-bold">{comment.user?.name.charAt(0)}</span>
                                         </div>
                                     </div>

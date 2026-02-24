@@ -9,15 +9,7 @@ const AuthPage = lazy(() => import('./pages/AuthPage').then(m => ({ default: m.A
 const DashboardPage = lazy(() => import('./pages/DashboardPage').then(m => ({ default: m.DashboardPage })))
 
 function AppRoutes() {
-  const { isAuthenticated, isLoading } = useAuth()
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
-      </div>
-    )
-  }
+  const { isAuthenticated } = useAuth()
 
   return (
     <Routes>

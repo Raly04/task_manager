@@ -63,7 +63,7 @@ export function TaskKanban({ tasks, onTaskUpdate, onEdit, onComment }: TaskKanba
                                                     >
                                                         <div className="card-body p-4 gap-3">
                                                             <div className="flex justify-between items-start gap-2">
-                                                                <span className={`${PRIORITY_BADGE[task.priority]} badge-xs font-bold uppercase tracking-wider`}>
+                                                                <span className={`${PRIORITY_BADGE[task.priority]} font-bold uppercase tracking-wider`}>
                                                                     {task.priority}
                                                                 </span>
                                                                 <div className="flex gap-1">
@@ -103,7 +103,7 @@ export function TaskKanban({ tasks, onTaskUpdate, onEdit, onComment }: TaskKanba
                                                                 </div>
                                                                 <div className="flex items-center gap-1.5 text-[10px] text-base-content/50 ml-auto">
                                                                     <div className="avatar placeholder">
-                                                                        <div className="bg-primary/10 text-primary w-5 rounded-full">
+                                                                        <div className="bg-primary/10 text-primary w-5 rounded-full flex items-center justify-center">
                                                                             <span className="text-[10px] font-bold">
                                                                                 {task.assigned_to?.name.charAt(0) || '?'}
                                                                             </span>

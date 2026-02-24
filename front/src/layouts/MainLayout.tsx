@@ -26,7 +26,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                                 <CheckSquare size={24} className="text-primary-content" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-black italic uppercase tracking-tighter">Task Manager</h1>
+                                <h1 className="text-xl font-black uppercase tracking-tighter">Task Manager</h1>
                                 <p className="text-[10px] text-base-content/40 font-bold uppercase tracking-widest">Collaborative Workspace</p>
                             </div>
                         </div>
@@ -38,7 +38,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                                     <p className="text-[11px] text-base-content/50 truncate max-w-[150px]">{user?.email}</p>
                                 </div>
                                 <div className="avatar placeholder">
-                                    <div className="bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-base-100 ring-offset-2 ring-primary/20">
+                                    <div className="bg-neutral text-neutral-content w-10 rounded-full ring ring-offset-base-100 ring-offset-2 ring-primary/20 flex items-center justify-center">
                                         <span className="text-sm font-bold">{user?.name.charAt(0)}</span>
                                     </div>
                                 </div>

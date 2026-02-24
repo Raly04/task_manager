@@ -15,11 +15,11 @@ export function TaskFilters({ filters, users, onFilterChange }: TaskFiltersProps
     const activeFilterCount = Object.entries(filters).filter(([key, val]) => val !== '' && key !== 'search').length
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mb-4">
             {/* Search Bar + Toggle */}
             <div className="flex gap-2">
                 <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
+                    <Search className="z-100 absolute left-3 top-1/2 -translate-y-1/2 text-base-content/40" size={18} />
                     <input
                         className="input input-bordered w-full pl-10 h-10 md:h-12 shadow-sm focus:shadow-md transition-all border-base-300"
                         onChange={(event) => onFilterChange({ search: event.target.value })}
