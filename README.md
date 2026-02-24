@@ -10,6 +10,36 @@ Une application de gestion de tâches collaborative performante, responsive et e
 - **Système de Commentaires** : Collaboration directe sur chaque tâche.
 - **Design Premium** : Interface mobile-first avec Tailwind CSS et DaisyUI.
 
+## 📋 Prérequis
+
+Avant de commencer, assurez-vous d'avoir les outils suivants installés :
+
+- **PHP** : `^8.2` (Recommandé : `8.3.6`)
+- **Composer** : `^2.0` (Recommandé : `2.7.1`)
+- **Node.js** : `^18.0` (Recommandé : `24.13.1`)
+- **NPM** : `^9.0` (Recommandé : `11.8.0`)
+- **SQLite** : Intégré par défaut (utilisé pour le stockage local)
+- **Git** : `^2.0` (Recommandé : `2.43.0`)
+
+---
+
+## 🛠️ Stack Technique
+
+### Frontend
+- **React** : `19.2.0` (SPA)
+- **Vite** : `7.3.1` (Build tool)
+- **TypeScript** : `5.9.3`
+- **Tailwind CSS** : `4.2.1` & **DaisyUI** : `5.5.19`
+- **Gestion d'état** : Custom Hooks & Context API
+- **Formulaires** : `React Hook Form` & `Zod`
+- **Temps Réel** : `Laravel Echo` & `Pusher-js`
+
+### Backend (API REST)
+- **Laravel Framework** : `12.0`
+- **Laravel Sanctum** : `4.0` (Authentification)
+- **Laravel Reverb** : `1.7` (WebSocket Server)
+- **Database** : SQLite (Migrate & Seed inclus)
+
 ---
 
 ## 🛠️ Installation
@@ -27,7 +57,7 @@ php artisan migrate --seed
 **Démarrer les services backend :**
 ```bash
 # Terminal 1 : Serveur API
-compose run dev
+composer run dev
 
 # Terminal 2 : Serveur de Socket (Temps Réel)
 php artisan reverb:start
