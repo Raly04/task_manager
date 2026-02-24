@@ -130,3 +130,6 @@ Retrouvez la documentation technique complète dans le dossier `docs/` :
 ## 🔑 Identifiants de Test (Seed)
 - **Admin** : `admin@test.com` / `password`
 - **User** : `rabe@test.com` / `password`
+
+## Remarques
+Si le temps réel de reverb ne fonctionne pas essayer de ne pas mettre les variables REVERB_HOST dans les .env (back et front) entre guillemets . 
