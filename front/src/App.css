@@ -1,5 +1,5 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: nord --default, dark --prefersdark;
+  themes: nord --default, dark;
 }
