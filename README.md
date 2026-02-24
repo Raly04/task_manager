@@ -57,9 +57,11 @@ php artisan migrate --seed
 **Démarrer les services backend :**
 ```bash
 # Terminal 1 : Serveur API
+npm install
 composer run dev
 
 # Terminal 2 : Serveur de Socket (Temps Réel)
+php artisan reverb:install
 php artisan reverb:start
 
 ```
@@ -70,7 +72,16 @@ cd front
 npm install
 npm run dev
 ```
-Définir les variables d'environnement dans le fichier .env en respectant le format du fichier .env.example
+Définir les variables d'environnement dans le fichier .env en respectant le format du fichier .env.example . Mettre les valeurs des variables suivantes :
+
+- VITE_REVERB_APP_ID=
+- VITE_REVERB_APP_KEY=
+- VITE_REVERB_APP_SECRET=
+- VITE_REVERB_HOST=
+- VITE_REVERB_PORT=
+- VITE_REVERB_SCHEME=
+
+Sont générées lors de l'installation de reverb et se trouve dans back/.env
 
 L'application sera accessible sur `http://localhost:3000`.
 
